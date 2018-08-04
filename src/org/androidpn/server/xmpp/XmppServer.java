@@ -73,6 +73,7 @@ public class XmppServer {
 
     /**
      * Starts the server using Spring configuration.
+     * 启动服务器-通过配置文件启动
      */
     public void start() {
         try {
