@@ -133,5 +133,14 @@
 		<property name="filterChainBuilder" ref="filterChainBuilder" />
 		<property name="reuseAddress" value="true" />
 	</bean>
+	
+<!-- 	
+	一个通俗的约定：
+	如果，在发送失败的情况下，允许发送3次，如果都没成功，才认为C已经掉线
+	客户端1分钟向S发送数据，那么可以设置为 3分钟 + 10s， 即190秒，让客户端可以有足够时间向S发送数据 
+	具体根据业务而定   -->
+	<bean id="sessionConfig" factory-bean="ioAcceptor" factory-method="getSessionConfig">
+		<property name="readerIdleTime" value="30"></property>
+	</bean>
 
 </beans>
