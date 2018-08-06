@@ -20,6 +20,8 @@ package org.androidpn.server.console.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.androidpn.server.service.NotificationService;
+import org.androidpn.server.service.ServiceLocator;
 import org.androidpn.server.util.Config;
 import org.androidpn.server.xmpp.push.NotificationManager;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -34,6 +36,7 @@ import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 public class NotificationController extends MultiActionController {
 
     private NotificationManager notificationManager;
+   
 
     public NotificationController() {
         notificationManager = new NotificationManager();

@@ -17,6 +17,12 @@
  */
 package org.androidpn.server.xmpp.handler;
 
+import java.util.List;
+
+import org.androidpn.server.model.Notification;
+import org.androidpn.server.service.NotificationService;
+import org.androidpn.server.service.ServiceLocator;
+import org.androidpn.server.xmpp.push.NotificationManager;
 import org.androidpn.server.xmpp.router.PacketDeliverer;
 import org.androidpn.server.xmpp.session.ClientSession;
 import org.androidpn.server.xmpp.session.Session;
@@ -38,12 +44,20 @@ public class PresenceUpdateHandler {
     protected final Log log = LogFactory.getLog(getClass());
 
     protected SessionManager sessionManager;
+    
+    private NotificationManager notificationManager;
+    
+    private NotificationService notificationService;
 
     /**
      * Constructor.
      */
     public PresenceUpdateHandler() {
         sessionManager = SessionManager.getInstance();
+        
+        notificationService = ServiceLocator.getNotificationService();
+        
+        notificationManager = new NotificationManager();
     }
 
     /**
@@ -73,6 +87,18 @@ public class PresenceUpdateHandler {
                         session.setInitialized(true);
                     }
                 }
+                
+                List<Notification> notifications = notificationService.findNotificationsByUsername(session.getUsername());
+                if (notifications != null && notifications.size() > 0) {
+					for (Notification notification : notifications) {
+						String apiKey = notification.getApiKey();
+						String title = notification.getTitle();
+						String message = notification.getTitle();
+						String uri = notification.getUri();
+						notificationManager.sendNotifcationToUser(apiKey, session.getUsername(), title, message, uri);
+						notificationService.deleteNotification(notification);
+					}
+				}
 
             } else if (Presence.Type.unavailable == type) {
 

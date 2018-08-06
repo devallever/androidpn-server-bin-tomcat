@@ -17,12 +17,20 @@
  */
 package org.androidpn.server.xmpp.push;
 
+import java.util.List;
 import java.util.Random;
 
+import org.androidpn.server.model.Notification;
+import org.androidpn.server.model.User;
+import org.androidpn.server.service.NotificationService;
+import org.androidpn.server.service.ServiceLocator;
+import org.androidpn.server.service.UserService;
 import org.androidpn.server.xmpp.session.ClientSession;
+import org.androidpn.server.xmpp.session.Session;
 import org.androidpn.server.xmpp.session.SessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.jce.provider.JDKDSASigner.ecDSA;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
@@ -40,12 +48,20 @@ public class NotificationManager {
     private final Log log = LogFactory.getLog(getClass());
 
     private SessionManager sessionManager;
+    
+    private NotificationService notificationService;
+    
+    private UserService userService;
 
     /**
      * Constructor.
      */
     public NotificationManager() {
         sessionManager = SessionManager.getInstance();
+        
+        notificationService = ServiceLocator.getNotificationService();
+        
+        userService = ServiceLocator.getUserService();
     }
 
     /**
@@ -60,12 +76,16 @@ public class NotificationManager {
             String uri) {
         log.debug("sendBroadcast()...");
         IQ notificationIQ = createNotificationIQ(apiKey, title, message, uri);
-        for (ClientSession session : sessionManager.getSessions()) {
-            if (session.getPresence().isAvailable()) {
-                notificationIQ.setTo(session.getAddress());
+        List<User> users = userService.getUsers();
+       	for (User user : users) {
+			ClientSession session = sessionManager.getSession(user.getUsername());
+			if (session != null && session.getPresence().isAvailable()) {
+				notificationIQ.setTo(session.getAddress());
                 session.deliver(notificationIQ);
-            }
-        }
+			}else {
+				saveNotification(apiKey, user.getUsername(), title, message, uri);
+			}
+		}
     }
 
     /**
@@ -85,9 +105,35 @@ public class NotificationManager {
             if (session.getPresence().isAvailable()) {
                 notificationIQ.setTo(session.getAddress());
                 session.deliver(notificationIQ);
-            }
-        }
+            }else {
+            	//如果该用户不在线,则将数据保存到数据库
+				saveNotification(apiKey, username, title, message, uri);
+			}
+        }else {
+			//
+        	try {
+        		User user = userService.getUserByUsername(username);
+            	if (user != null) {
+            		saveNotification(apiKey, username, title, message, uri);
+    			}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        	
+		}
     }
+    
+    private void saveNotification(String apiKey, String username,
+            String title, String message, String uri) {
+		Notification notification = new Notification();
+		notification.setApiKey(apiKey);
+		notification.setUsername(username);
+		notification.setTitle(title);
+		notification.setMessage(message);
+		notification.setUri(uri);
+		
+		notificationService.savaNotification(notification);
+	}
 
     /**
      * Creates a new notification IQ and returns it.
