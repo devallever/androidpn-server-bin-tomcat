@@ -11,5 +11,7 @@ public interface NotificationDao {
 	List<Notification> findNotificationsByUsername(String username);
 	
 	void deleteNotification(Notification notification);
+	
+	void deleteNotificationByUuid(String uuid);
 
 }

@@ -18,6 +18,9 @@ public class Notification {
 	@Column(name = "api_key", length = 64)
 	private String apiKey;
 	
+	@Column(name = "uuid", nullable = false, length = 64, unique = true)
+	private String uuid;
+	
 	@Column(name = "username", nullable = false, length = 64)
 	private String username;
 	
@@ -41,6 +44,12 @@ public class Notification {
 	}
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
+	}
+	public String getUuid() {
+		return uuid;
+	}
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	public String getUsername() {
 		return username;

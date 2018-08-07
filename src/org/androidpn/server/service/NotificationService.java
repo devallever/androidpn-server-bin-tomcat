@@ -10,4 +10,6 @@ public interface NotificationService {
 	List<Notification> findNotificationsByUsername(String username);
 
 	void deleteNotification(Notification notification);
+	
+	void deleteNotificationByUuid(String uuid);
 }

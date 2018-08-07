@@ -30,4 +30,16 @@ public class NotificationDaoHibernate extends HibernateDaoSupport implements Not
 		getHibernateTemplate().delete(notification);
 	}
 
+	@SuppressWarnings("unchecked")
+	public void deleteNotificationByUuid(String uuid) {
+		System.out.println("deleteNotificationByUuid");
+		//从 Notification类中查找
+		List<Notification> notifications = getHibernateTemplate().find("from Notification where uuid=?",
+				uuid);
+		if (notifications != null && notifications.size() > 0) {
+			Notification notification = notifications.get(0);
+			deleteNotification(notification);
+		}
+	}
+
 }
