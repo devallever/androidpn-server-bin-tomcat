@@ -58,6 +58,8 @@ public class NotificationController extends MultiActionController {
                 "username");
         String alias = ServletRequestUtils.getStringParameter(request,
                 "alias");
+        String tag = ServletRequestUtils.getStringParameter(request,
+                "tag");
         String title = ServletRequestUtils.getStringParameter(request, "title");
         String message = ServletRequestUtils.getStringParameter(request,
                 "message");
@@ -74,6 +76,8 @@ public class NotificationController extends MultiActionController {
 		} else if (broadcast.equals("2")) {
 			//false 不与上一功能混合
 			notificationManager.sendNotificationByAlias(apiKey, alias, title, message, uri, false);
+		}else if (broadcast.equals("3")){
+			notificationManager.sendNotificationByTag(apiKey, tag, title, message, uri, false);
 		}
 
         ModelAndView mav = new ModelAndView();

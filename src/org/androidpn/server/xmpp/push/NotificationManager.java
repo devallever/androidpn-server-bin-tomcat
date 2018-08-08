@@ -19,6 +19,7 @@ package org.androidpn.server.xmpp.push;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.androidpn.server.model.Notification;
 import org.androidpn.server.model.User;
@@ -30,6 +31,7 @@ import org.androidpn.server.xmpp.session.Session;
 import org.androidpn.server.xmpp.session.SessionManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.mina.util.ConcurrentHashSet;
 import org.bouncycastle.jce.provider.JDKDSASigner.ecDSA;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -129,6 +131,16 @@ public class NotificationManager {
 		String username = sessionManager.getUsernameByAlias(alias);
 		if (username != null) {
 			sendNotifcationToUser(apiKey, username, title, message, uri, shouldSave);	
+		}
+	}
+    
+    public void sendNotificationByTag(String apiKey, String tag,
+            String title, String message, String uri, boolean shouldSave) {
+		Set<String> usernameSet = sessionManager.getUsernamesByTag(tag);
+		if (usernameSet != null && !usernameSet.isEmpty()) {
+			for (String username : usernameSet) {
+				sendNotifcationToUser(apiKey, username, title, message, uri, shouldSave);
+			}
 		}
 	}
     

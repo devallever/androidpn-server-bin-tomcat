@@ -19,6 +19,7 @@ package org.androidpn.server.xmpp.session;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -30,6 +31,7 @@ import org.androidpn.server.xmpp.net.Connection;
 import org.androidpn.server.xmpp.net.ConnectionCloseListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.mina.util.ConcurrentHashSet;
 import org.xmpp.packet.JID;
 
 /** 
@@ -52,6 +54,8 @@ public class SessionManager {
     private Map<String, ClientSession> clientSessions = new ConcurrentHashMap<String, ClientSession>();
     
     private Map<String, String> aliasUsernameMap = new ConcurrentHashMap<String, String>();
+    
+    private Map<String, ConcurrentHashSet<String>> tagUsernameMap = new ConcurrentHashMap<String, ConcurrentHashSet<String>>();
 
     private final AtomicInteger connectionsCounter = new AtomicInteger(0);
 
@@ -225,6 +229,21 @@ public class SessionManager {
     	System.out.println("get alias ======================================================== alias = " + alias);
 		String username = aliasUsernameMap.get(alias);
 		return username;
+	}
+    
+    public void setUserTag(String username, String tag ) {
+		ConcurrentHashSet<String> usernameSet = tagUsernameMap.get(tag);
+		if (usernameSet == null) {
+			ConcurrentHashSet<String> concurrentHashSet = new ConcurrentHashSet<String>();
+			concurrentHashSet.add(username);
+			tagUsernameMap.put(tag, concurrentHashSet);
+		}else {
+			usernameSet.add(username);
+		}
+	}
+    
+    public ConcurrentHashSet<String> getUsernamesByTag(String tag) {
+		return tagUsernameMap.get(tag);
 	}
 
 }
