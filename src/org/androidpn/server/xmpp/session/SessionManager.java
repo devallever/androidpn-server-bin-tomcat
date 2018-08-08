@@ -50,6 +50,8 @@ public class SessionManager {
     private Map<String, ClientSession> preAuthSessions = new ConcurrentHashMap<String, ClientSession>();
 
     private Map<String, ClientSession> clientSessions = new ConcurrentHashMap<String, ClientSession>();
+    
+    private Map<String, String> aliasUsernameMap = new ConcurrentHashMap<String, String>();
 
     private final AtomicInteger connectionsCounter = new AtomicInteger(0);
 
@@ -213,5 +215,16 @@ public class SessionManager {
             }
         }
     }
+    
+    public void setUserAlias(String username, String alias) {
+		aliasUsernameMap.put(alias, username);
+		System.out.println("set alias ======================================================== alias = " + alias);
+	}
+    
+    public String getUsernameByAlias(String alias) {
+    	System.out.println("get alias ======================================================== alias = " + alias);
+		String username = aliasUsernameMap.get(alias);
+		return username;
+	}
 
 }

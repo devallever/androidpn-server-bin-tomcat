@@ -124,6 +124,14 @@ public class NotificationManager {
 		}
     }
     
+    public void sendNotificationByAlias(String apiKey, String alias,
+            String title, String message, String uri, boolean shouldSave) {
+		String username = sessionManager.getUsernameByAlias(alias);
+		if (username != null) {
+			sendNotifcationToUser(apiKey, username, title, message, uri, shouldSave);	
+		}
+	}
+    
     private void saveNotification(String apiKey, String username,
             String title, String message, String uri, String uuid) {
 		Notification notification = new Notification();
