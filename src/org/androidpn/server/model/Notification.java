@@ -33,6 +33,11 @@ public class Notification {
 	@Column(name = "uri", length = 256)
 	private String uri;
 	
+	@Column(name = "iamge_url", length = 256)
+	private String imageUrl;
+	
+	
+	
 	public long getId() {
 		return id;
 	}
@@ -75,6 +80,14 @@ public class Notification {
 	public void setUri(String uri) {
 		this.uri = uri;
 	}
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	
+	
 	
 	
 	

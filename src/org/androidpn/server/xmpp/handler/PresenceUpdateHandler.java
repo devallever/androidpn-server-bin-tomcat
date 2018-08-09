@@ -95,7 +95,8 @@ public class PresenceUpdateHandler {
 						String title = notification.getTitle();
 						String message = notification.getTitle();
 						String uri = notification.getUri();
-						notificationManager.sendNotifcationToUser(apiKey, session.getUsername(), title, message, uri, false);
+						String imageUrl = notification.getImageUrl();
+						notificationManager.sendNotifcationToUser(apiKey, session.getUsername(), title, message, uri, imageUrl, false);
 						notificationService.deleteNotification(notification);
 					}
 				}
